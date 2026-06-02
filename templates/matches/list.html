@@ -50,7 +50,7 @@
             {{ match.get_status_display }}
           </span>
           <small class="{% if match.status == 'FINISHED' %}text-white-50{% else %}text-muted{% endif %}"
-            style="font-size:11px">
+            style="font: size 0.5rem">
             {{ match.kickoff_time|date:"d/m/Y · H:i" }}
           </small>
         </div>
@@ -63,10 +63,8 @@
             <!-- Local -->
             <div class="text-center" style="min-width:90px">
               <div class="flag-lg" style="font-size:2.4rem;line-height:1">{{ match.home_team.flag }}</div>
-              <div class="fw-bold mt-1" style="font-size:13px;letter-spacing:.5px">
-                {{ match.home_team.code }}
-              </div>
-              <div class="text-muted" style="font-size:11px">{{ match.home_team.name }}</div>
+              
+              <div class="text-muted" style="font: size 0.5rem">{{ match.home_team.name }}</div>
             </div>
 
             <!-- Marcador / VS -->
@@ -89,10 +87,8 @@
             <!-- Visitante -->
             <div class="text-center" style="min-width:90px">
               <div class="flag-lg" style="font-size:2.4rem;line-height:1">{{ match.away_team.flag }}</div>
-              <div class="fw-bold mt-1" style="font-size:13px;letter-spacing:.5px">
-                {{ match.away_team.code }}
-              </div>
-              <div class="text-muted" style="font-size:11px">{{ match.away_team.name }}</div>
+              
+              <div class="text-muted" style="font: size 0.5rem">{{ match.away_team.name }}</div>
             </div>
 
           </div>
