@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% load match_extras %}
+{% block title %}Partidos — Prode Mundial{% endblock %}
+
+{% block content %}
+
+<div class="container my-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h4 mb-0">Partidos</h1>
+  </div>
+
+  <!-- Filtros -->
+  <div class="d-flex gap-2 mb-4 flex-wrap">
+    <a href="{% url 'matches:list' %}"
+      class="btn btn-sm {% if not request.GET.estado %}btn-dark{% else %}btn-outline-secondary{% endif %}">
+      Todos
+    </a>
+    <a href="?estado=PENDING"
+      class="btn btn-sm {% if request.GET.estado == 'PENDING' %}btn-secondary{% else %}btn-outline-secondary{% endif %}">
+      Pendientes
+    </a>
+    <a href="?estado=IN_PROGRESS"
+      class="btn btn-sm {% if request.GET.estado == 'IN_PROGRESS' %}btn-warning{% else %}btn-outline-warning{% endif %}">
+      En juego
+    </a>
+    <a href="?estado=FINISHED"
+      class="btn btn-sm {% if request.GET.estado == 'FINISHED' %}btn-success{% else %}btn-outline-success{% endif %}">
+      Finalizados
+    </a>
+  </div>
+
+  {% if not matches %}
+  <div class="alert alert-info">No hay partidos cargados.</div>
+  {% else %}
+  <div class="row g-3">
+    {% for match in matches %}
+    <div class="col-12 col-md-6 col-xl-4">
+      <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+
+        <!-- Banda de color según estado -->
+        <div class="px-3 py-2 d-flex justify-content-between align-items-center
+        {% if match.status == 'IN_PROGRESS' %}bg-warning
+        {% elif match.status == 'FINISHED' %}bg-success text-white
+        {% else %}bg-light{% endif %}">
+          <span class="badge rounded-pill
+          {% if match.status == 'PENDING' %}bg-secondary
+          {% elif match.status == 'IN_PROGRESS' %}bg-dark
+          {% else %}bg-white text-success{% endif %}
+          fw-normal" style="font-size:11px">
+            {{ match.get_status_display }}
+          </span>
+          <small class="{% if match.status == 'FINISHED' %}text-white-50{% else %}text-muted{% endif %}"
+            style="font-size:11px">
+            {{ match.kickoff_time|date:"d/m/Y · H:i" }}
+          </small>
+        </div>
+
+        <div class="card-body py-3 px-4">
+
+          <!-- Equipos -->
+          <div class="d-flex align-items-center justify-content-between">
+
+            <!-- Local -->
+            <div class="text-center" style="min-width:90px">
+              <div class="flag-lg" style="font-size:2.4rem;line-height:1">{{ match.home_team.flag }}</div>
+              <div class="fw-bold mt-1" style="font-size:13px;letter-spacing:.5px">
+                {{ match.home_team.code }}
+              </div>
+              <div class="text-muted" style="font-size:11px">{{ match.home_team.name }}</div>
+            </div>
+
+            <!-- Marcador / VS -->
+            <div class="text-center flex-grow-1">
+              {% if match.status == 'FINISHED' %}
+              <div class="display-6 fw-bold lh-1">
+                {{ match.home_score }}<span class="text-muted mx-1">—</span>{{ match.away_score }}
+              </div>
+              <div class="text-muted mt-1" style="font-size:11px">Final</div>
+              {% elif match.status == 'IN_PROGRESS' %}
+              <div class="display-6 fw-bold lh-1 text-warning">
+                {{ match.home_score|default:"0" }}<span class="text-muted mx-1">—</span>{{ match.away_score|default:"0" }}
+              </div>
+              <div class="text-warning mt-1" style="font-size:11px">● En vivo</div>
+              {% else %}
+              <div class="text-muted fw-bold" style="font-size:1.1rem">VS</div>
+              {% endif %}
+            </div>
+
+            <!-- Visitante -->
+            <div class="text-center" style="min-width:90px">
+              <div class="flag-lg" style="font-size:2.4rem;line-height:1">{{ match.away_team.flag }}</div>
+              <div class="fw-bold mt-1" style="font-size:13px;letter-spacing:.5px">
+                {{ match.away_team.code }}
+              </div>
+              <div class="text-muted" style="font-size:11px">{{ match.away_team.name }}</div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Footer: acción -->
+        <div class="card-footer border-0 bg-white pt-0 pb-3 px-4">
+          {% if user.is_authenticated %}
+          {% if match.pk in predicted_ids %}
+          {% with pred=predictions_map|get_item:match.pk %}
+
+          <div class="d-flex align-items-center justify-content-between">
+
+            <!-- Pronóstico del usuario -->
+            <div>
+              <div class="text-success fw-semibold small mb-1">✓ Tu pronóstico</div>
+              <div class="fw-bold fs-5">
+                {{ pred.home_goals }}
+                <span class="text-muted mx-1">—</span>
+                {{ pred.away_goals }}
+              </div>
+            </div>
+
+            <!-- Puntos si el partido terminó -->
+            {% if match.status == 'FINISHED' %}
+            <div class="text-center">
+              {% if pred.is_exact %}
+              <span class="badge bg-success rounded-pill px-3">⭐ {{ pred.points }} pts</span>
+              {% elif pred.is_winner %}
+              <span class="badge bg-primary rounded-pill px-3">✓ {{ pred.points }} pts</span>
+              {% else %}
+              <span class="badge bg-secondary rounded-pill px-3">0 pts</span>
+              {% endif %}
+            </div>
+            {% elif not match.is_locked %}
+            <a href="{% url 'predictions:edit' pred.pk %}" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+              Editar
+            </a>
+            {% endif %}
+
+          </div>
+          {% endwith %}
+
+          {% elif not match.is_locked %}
+          <a href="{% url 'predictions:create' match.pk %}" class="btn btn-success w-100 rounded-pill fw-semibold">
+            Cargar pronóstico
+          </a>
+          {% else %}
+          <span class="text-muted small">🔒 Cerrado para pronósticos</span>
+          {% endif %}
+          {% else %}
+          <a href="{% url 'accounts:login' %}" class="btn btn-outline-success w-100 rounded-pill small">
+            Iniciá sesión para pronosticar
+          </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+{% endblock %}

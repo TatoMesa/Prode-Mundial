@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Ranking{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">🏆 Ranking General</h1>
+
+    {% if ranking %}
+        <div class="card">
+            <div class="table-responsive" " >
+                <table class="table table-hover mb-0" >
+                    <thead class="table-dark">
+                        <tr>
+                            <th style="width: 10%;">Posición</th>
+                            <th style="width: 80%;">Usuario</th>
+                            <th style="width: 10%;" class="text-end">Puntos</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in ranking %}
+                            <tr class="{% if user == request.user %}table-primary{% endif %}">
+                                <td>
+                                    {% if forloop.counter == 1 %}
+                                        <h5 class="mb-0">🥇 {{ forloop.counter }}</h5>
+                                    {% elif forloop.counter == 2 %}
+                                        <h5 class="mb-0">🥈 {{ forloop.counter }}</h5>
+                                    {% elif forloop.counter == 3 %}
+                                        <h5 class="mb-0">🥉 {{ forloop.counter }}</h5>
+                                    {% else %}
+                                        <span class="badge bg-light text-dark">{{ forloop.counter }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <strong>
+                                            {{ user.get_full_name|default:user.username }}
+                                    </strong>
+                                    {% if user.profile.avatar %}
+                                        <img src="{{ user.profile.avatar.url }}" 
+                                             alt="{{ user.username }}" 
+                                             class="rounded-circle ms-2" 
+                                             style="width: 30px; height: 30px;">
+                                    {% endif %}
+                                </td>
+                                <td class="text-end">
+                                    <h5 class="mb-0 text-primary">
+                                        <strong>{{ user.total_points|default:0 }} pts</strong>
+                                    </h5>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Paginación -->
+        {% if is_paginated %}
+            <nav aria-label="Page navigation" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1">Primera</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">← Anterior</a>
+                        </li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ num }}</span>
+                            </li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente →</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Última</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+    {% else %}
+        <div class="alert alert-info text-center" role="alert">
+            <h5>Aún no hay predicciones</h5>
+            <p class="mb-0">¡Se un el primero en hacer una predicción!</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

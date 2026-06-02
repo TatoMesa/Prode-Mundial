@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Predicción - {{ prediction.match }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <a href="{% url 'predictions:user_list' %}" class="btn btn-secondary mb-3">← Volver a mis predicciones</a>
+
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">{{ prediction.match.home_team }} vs {{ prediction.match.away_team }}</h4>
+                    <small>{{ prediction.match.kickoff_time|date:"d/m/Y H:i" }}</small>
+                </div>
+                
+                <div class="card-body">
+                    <!-- Equipos y predicción -->
+                    <div class="row text-center mb-4">
+                        <div class="col-md-3">
+                            <h2>{{ prediction.match.home_team.flag }}</h2>
+                            <p class="text-muted">{{ prediction.match.home_team.name }}</p>
+                        </div>
+                        <div class="col-md-3">
+                            <div>
+                                <span class="badge bg-primary" style="font-size: 18px;">
+                                    {{ prediction.home_goals }}
+                                </span>
+                            </div>
+                            <small class="text-muted">Tu predicción</small>
+                        </div>
+                        <div class="col-md-3">
+                            <div>
+                                <span class="badge bg-warning" style="font-size: 18px;">
+                                    {{ prediction.match.home_score|default:"—" }}
+                                </span>
+                            </div>
+                            <small class="text-muted">Resultado Real</small>
+                        </div>
+                        <div class="col-md-3">
+                            <h2>{{ prediction.match.away_team.flag }}</h2>
+                            <p class="text-muted">{{ prediction.match.away_team.name }}</p>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Goles visitante -->
+                    <div class="row text-center mb-4">
+                        <div class="col-md-3 offset-md-3">
+                            <div>
+                                <span class="badge bg-primary" style="font-size: 18px;">
+                                    {{ prediction.away_goals }}
+                                </span>
+                            </div>
+                            <small class="text-muted">Tu predicción</small>
+                        </div>
+                        <div class="col-md-3">
+                            <div>
+                                <span class="badge bg-warning" style="font-size: 18px;">
+                                    {{ prediction.match.away_score|default:"—" }}
+                                </span>
+                            </div>
+                            <small class="text-muted">Resultado Real</small>
+                        </div>
+                    </div>
+
+                    <!-- Estado del partido -->
+                    <div class="alert alert-info">
+                        <strong>Estado del Partido:</strong>
+                        {% if prediction.match.status == 'FINISHED' %}
+                            <span class="badge bg-success">Finalizado</span>
+                        {% elif prediction.match.status == 'IN_PROGRESS' %}
+                            <span class="badge bg-warning">En juego</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Pendiente</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Resultado y puntuación -->
+                    {% if is_finished %}
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <h5>Resultado</h5>
+                                {% if prediction.is_exact %}
+                                    <div class="alert alert-success">
+                                        <h6>🎯 ¡Resultado Exacto!</h6>
+                                        <strong>+5 puntos</strong>
+                                    </div>
+                                {% elif prediction.is_winner %}
+                                    <div class="alert alert-info">
+                                        <h6>✓ Ganador Correcto</h6>
+                                        <strong>+2 puntos</strong>
+                                    </div>
+                                {% else %}
+                                    <div class="alert alert-danger">
+                                        <h6>✗ Predicción Fallida</h6>
+                                        <strong>0 puntos</strong>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <h5>Puntuación</h5>
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <h3 class="text-primary">{{ prediction.points }} puntos</h3>
+                                        <small class="text-muted">Total en este partido</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Detalles -->
+                        <div class="mt-4 p-3 bg-light rounded">
+                            <h6>Detalles:</h6>
+                            <ul class="mb-0">
+                                {% if prediction.is_exact %}
+                                    <li>Marcador exacto: {{ prediction.home_goals }}-{{ prediction.away_goals }}</li>
+                                {% endif %}
+                                {% if prediction.is_winner %}
+                                    <li>
+                                        {% if result_home > result_away %}
+                                            Ganador local correcto ({{ prediction.match.home_team }})
+                                        {% elif result_away > result_home %}
+                                            Ganador visitante correcto ({{ prediction.match.away_team }})
+                                        {% else %}
+                                            Empate predicho correctamente
+                                        {% endif %}
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-warning">
+                            <strong>⏳ Aún por disputarse</strong>
+                            <br>
+                            Los puntos se calcularon automáticamente cuando el partido finalizó.
+                        </div>
+                    {% endif %}
+
+                    <!-- Acciones -->
+                    <div class="mt-4 d-flex gap-2">
+                        {% if not is_finished and not prediction.match.is_locked %}
+                            <a href="{% url 'predictions:create_update' prediction.match.pk %}" class="btn btn-warning">
+                                ✏️ Editar Predicción
+                            </a>
+                        {% endif %}
+                        <a href="{% url 'matches:detail' prediction.match.pk %}" class="btn btn-outline-primary">
+                            Ver Partido
+                        </a>
+                        <a href="{% url 'predictions:user_list' %}" class="btn btn-outline-secondary">
+                            Mis Predicciones
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

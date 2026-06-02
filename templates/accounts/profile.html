@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Mi perfil — Prode Mundial{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-7 col-lg-6">
+
+      <h1 class="h4 mb-4">Mi perfil</h1>
+
+      <div class="card shadow-sm">
+        <div class="card-body p-4">
+
+          <!-- Avatar -->
+          <div class="text-center mb-4">
+            {% if object.avatar %}
+            <img src="{{ object.avatar.url }}" width="90" height="90" class="rounded-circle object-fit-cover border"
+              alt="Avatar de {{ request.user.username }}">
+            {% else %}
+            <div class="rounded-circle bg-success text-white d-inline-flex align-items-center
+                        justify-content-center fs-3 border" style="width:90px;height:90px;">
+              {{ request.user.username|first|upper }}
+            </div>
+            {% endif %}
+            <p class="mt-2 mb-0 fw-semibold">{{ request.user.username }}</p>
+            <p class="text-muted small">{{ request.user.email }}</p>
+          </div>
+
+          <form method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+
+            <div class="row g-3">
+              <div class="col-sm-6">
+                <label for="{{ form.first_name.id_for_label }}" class="form-label">Nombre</label>
+                {{ form.first_name }}
+                {% if form.first_name.errors %}
+                <div class="invalid-feedback d-block">{{ form.first_name.errors }}</div>
+                {% endif %}
+              </div>
+              <div class="col-sm-6">
+                <label for="{{ form.last_name.id_for_label }}" class="form-label">Apellido</label>
+                {{ form.last_name }}
+                {% if form.last_name.errors %}
+                <div class="invalid-feedback d-block">{{ form.last_name.errors }}</div>
+                {% endif %}
+              </div>
+              <div class="col-12">
+                <label for="{{ form.avatar.id_for_label }}" class="form-label">Foto de perfil</label>
+                {{ form.avatar }}
+                <div class="form-text">Opcional. Formatos: JPG, PNG. Máximo 2 MB.</div>
+                {% if form.avatar.errors %}
+                <div class="invalid-feedback d-block">{{ form.avatar.errors }}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mt-4">
+              <a href="{% url 'predictions:my_predictions' %}" class="btn btn-outline-secondary btn-sm">
+                Mis pronósticos
+              </a>
+              <button type="submit" class="btn btn-success">Guardar cambios</button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+
+      <!-- Resumen — datos calculados desde la vista -->
+      {% if profile_stats.total %}
+      <div class="card shadow-sm mt-3">
+        <div class="card-body py-3">
+          <p class="text-muted small mb-2">Resumen</p>
+          <div class="row text-center g-0">
+            <div class="col border-end">
+              <div class="fw-bold fs-5">{{ profile_stats.total }}</div>
+              <div class="text-muted small">Pronósticos</div>
+            </div>
+            <div class="col border-end">
+              <div class="fw-bold fs-5 text-warning">{{ profile_stats.exact_count }}</div>
+              <div class="text-muted small">Exactos</div>
+            </div>
+            <div class="col">
+              <div class="fw-bold fs-5 text-success">{{ profile_stats.total_points }}</div>
+              <div class="text-muted small">Puntos</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+{% endblock %}

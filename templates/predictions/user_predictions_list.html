@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+
+{% block title %}Mis Predicciones — Prode Mundial{% endblock %}
+
+{% block content %}
+
+<div class="container my-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h4 mb-0">Mis Predicciones</h1>
+        <a href="{% url 'matches:list' %}" class="btn btn-success btn-sm rounded-pill px-3">
+            + Nuevo pronóstico
+        </a>
+    </div>
+
+    <!-- Estadísticas -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+            <div class="card border-0 shadow-sm text-center py-3">
+                <div class="h3 fw-bold text-success mb-0">{{ stats.total_points }}</div>
+                <div class="small text-muted">Puntos</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card border-0 shadow-sm text-center py-3">
+                <div class="h3 fw-bold text-primary mb-0">{{ stats.total }}</div>
+                <div class="small text-muted">Predicciones</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card border-0 shadow-sm text-center py-3">
+                <div class="h3 fw-bold text-warning mb-0">{{ stats.exact_count }}</div>
+                <div class="small text-muted">Exactas</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card border-0 shadow-sm text-center py-3">
+                <div class="h3 fw-bold text-info mb-0">{{ stats.winner_count }}</div>
+                <div class="small text-muted">Ganador</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla -->
+    {% if predictions %}
+    <div class="card border-0 shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Partido</th>
+                        <th class="text-center">Fecha</th>
+                        <th class="text-center">Mi pronóstico</th>
+                        <th class="text-center">Resultado</th>
+                        <th class="text-center">Puntos</th>
+                        <th class="text-center">Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for prediction in predictions %}
+                    <tr>
+                        <td>
+                            <span class="fw-semibold">
+                                {{ prediction.match.home_team.flag }}
+                                {{ prediction.match.home_team.code }}
+                                <span class="text-muted fw-normal">vs</span>
+                                {{ prediction.match.away_team.code }}
+                                {{ prediction.match.away_team.flag }}
+                            </span>
+                        </td>
+                        <td class="text-center small text-muted">
+                            {{ prediction.match.kickoff_time|date:"d/m H:i" }}
+                        </td>
+                        <td class="text-center">
+                            <span class="fw-bold">
+                                {{ prediction.home_goals }} — {{ prediction.away_goals }}
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            {% if prediction.match.status == 'FINISHED' %}
+                            <span class="fw-bold">
+                                {{ prediction.match.home_score }} — {{ prediction.match.away_score }}
+                            </span>
+                            {% elif prediction.match.status == 'IN_PROGRESS' %}
+                            <span class="badge bg-warning text-dark">En juego</span>
+                            {% else %}
+                            <span class="text-muted">—</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            {% if prediction.match.status == 'FINISHED' %}
+                            {% if prediction.is_exact %}
+                            <span class="badge bg-success rounded-pill px-3">⭐ {{ prediction.points }} pts</span>
+                            {% elif prediction.is_winner %}
+                            <span class="badge bg-primary rounded-pill px-3">✓ {{ prediction.points }} pts</span>
+                            {% else %}
+                            <span class="badge bg-secondary rounded-pill px-3">0 pts</span>
+                            {% endif %}
+                            {% else %}
+                            <span class="text-muted">—</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            {% if not prediction.match.is_locked %}
+                            <a href="{% url 'predictions:edit' prediction.pk %}"
+                                class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+                                Editar
+                            </a>
+                            {% else %}
+                            <span class="text-muted small">🔒</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Paginación -->
+    {% if is_paginated %}
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">← Anterior</a>
+            </li>
+            {% endif %}
+            <li class="page-item active">
+                <span class="page-link">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+            </li>
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente →</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+
+    {% else %}
+    <div class="alert alert-info text-center">
+        <p class="mb-1">Todavía no cargaste ningún pronóstico.</p>
+        <a href="{% url 'matches:list' %}">Ver partidos disponibles</a>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}
