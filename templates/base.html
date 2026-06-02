@@ -23,7 +23,7 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-link"><strong>{{ user.profile.total_points|default:0 }} Pts</strong></li>
+                    <li class="nav-link"><strong>Total {{ user_total_points|default:0 }} Pts</strong></li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'matches:list' %}">🎯 Partidos</a>
                     </li>
