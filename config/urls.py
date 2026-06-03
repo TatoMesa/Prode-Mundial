@@ -26,4 +26,5 @@ urlpatterns = [
     path('accounts/', include('apps.accounts.urls', namespace='accounts')),
     path('matches/', include('apps.matches.urls', namespace='matches')),
     path('predictions/', include('apps.predictions.urls', namespace='predictions')),
+    path('leagues/', include('apps.leagues.urls', namespace='leagues')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

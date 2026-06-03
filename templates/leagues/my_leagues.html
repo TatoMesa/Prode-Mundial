@@ -1,0 +1,40 @@
+<!-- templates/leagues/my_leagues.html -->
+{% extends "base.html" %}
+{% block title %}Mis ligas — Prode Mundial{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="h4 mb-0">Mis ligas</h2>
+        <a href="{% url 'leagues:join' %}" class="btn btn-success btn-sm rounded-pill px-3">
+        + Unirse a una liga
+        </a>
+    </div>
+
+    {% if not leagues %}
+    <div class="alert alert-info text-center">
+        <p class="mb-1">Todavía no pertenecés a ninguna liga privada.</p>
+        <a href="{% url 'leagues:join' %}">Ingresá un código para unirte</a>
+    </div>
+    {% else %}
+    <div class="row g-3">
+    {% for league in leagues %}
+        <div class="col-12 col-md-6 col-lg-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body p-4">
+            <h2 class="h5 mb-1">{{ league.name }}</h2>
+            <p class="text-muted small mb-3">
+                {{ league.memberships.count }} participante{{ league.memberships.count|pluralize }}
+            </p>
+            <a href="{% url 'leagues:ranking' league.code %}"
+                class="btn btn-outline-success w-100 rounded-pill">
+                Ver ranking
+            </a>
+            </div>
+        </div>
+        </div>
+    {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
