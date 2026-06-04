@@ -4,17 +4,14 @@ Django settings for config project.
 
 from pathlib import Path
 import os
+from decouple import config, Csv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-r8wjau&l&n7-y+flo&08ee((t-r7wt8&n*167lfpu2ktq^7213')
-
-# DEBUG — False en producción
-DEBUG = os.environ.get('DEBUG', 'True') == 'True'
-
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+SECRET_KEY = config('SECRET_KEY', default='django-insecure-r8wjau&l&n7-y+flo&08ee((t-r7wt8&n*167lfpu2ktq^7213')
+DEBUG = config('DEBUG', default=True, cast=bool)
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=Csv())
 
 
 # Application definition
@@ -132,14 +129,12 @@ PREDICTION_LOCK_MINUTES = 10
 
 #EMAIL CONFIGURATION
 if DEBUG:
-    # Desarrollo: imprime el email en la consola
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 else:
-    # Producción: SMTP real
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.resend.com')
-    EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 587))
+    EMAIL_HOST = config('EMAIL_HOST', default='smtp.resend.com')
+    EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
     EMAIL_USE_TLS = True
-    EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'resend')
-    EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
-    DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', '')
+    EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='resend')
+    EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
+    DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='')
