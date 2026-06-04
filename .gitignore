@@ -13,6 +13,9 @@ env/
 *.pyo
 __pycache__/
 *.py[cod]
+__pycache__/
+*.pyd
+.pytest_cache/
 
 # Django
 db.sqlite3
@@ -29,3 +32,4 @@ staticfiles/
 # Sistema operativo
 .DS_Store
 Thumbs.db
+
