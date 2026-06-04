@@ -131,6 +131,6 @@ PREDICTION_LOCK_MINUTES = 10
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 else:
-    EMAIL_BACKEND = 'resend.backends.django.ResendBackend'
+    EMAIL_BACKEND = 'apps.accounts.email_backend.ResendEmailBackend'
     RESEND_API_KEY = config('RESEND_API_KEY', default='')
     DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='ProdeMundial <onboarding@resend.dev>')
