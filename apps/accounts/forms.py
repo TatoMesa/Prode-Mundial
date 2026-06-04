@@ -47,10 +47,12 @@ class ProfileUpdateForm(forms.ModelForm):
         max_length=150, required=False,
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
+    
 
     class Meta:
         model = UserProfile
-        fields = ('avatar',)
+        fields = ('avatar','telefono')
         widgets = {
             'avatar': forms.FileInput(attrs={'class': 'form-control'}),
+            'telefono': forms.TextInput(attrs={'class': 'form-control'}),
         }

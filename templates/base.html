@@ -28,9 +28,11 @@
                         <a class="nav-link" href="{% url 'matches:list' %}">🎯 Partidos</a>
                     </li>
                     {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'predictions:ranking' %}">🏆 Ranking</a>
-                        </li>
+                        {% comment %}
+                            <li class="nav-item">
+                            Navbar  <a class="nav-link" href="{% url 'predictions:ranking' %}">🏆 Ranking</a>
+                            </li>
+                        {% endcomment %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'leagues:my_leagues' %}">🏆 Mis ligas</a>
                         </li>

@@ -146,3 +146,5 @@ else:
     EMAIL_BACKEND = 'apps.accounts.email_backend.ResendEmailBackend'
     RESEND_API_KEY = config('RESEND_API_KEY', default='')
     DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='ProdeMundial <onboarding@resend.dev>')
+
+
