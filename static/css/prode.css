@@ -22,6 +22,10 @@ body {
     background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%) !important;
 }
 
+.fondonegro{
+    background-color: var(--black-color) !important;
+}
+
 .navbar-brand {
     font-weight: bold;
     font-size: 1.5rem;
