@@ -82,31 +82,50 @@
         </div>
     </div>
 
+    <!-- ── Sección de Premios ───────────────────────────────────────────── -->
+    
     {% if league.has_prizes %}
-    <section class="mb-2 mt-2">
-        <h2 class="h3 fw-bold mb-2">{{ league.prizes_title }}</h2>
-        <div class="row g-1">
-            {% for prize in league.prizes %}
-            <div class="col-12 col-md-4">
-                <div class="card border-0 shadow-sm rounded-4 h-100 text-center">
-                    
-                    <div class="card-body p-2">
-                        <div class="d-flex align-items-center justify-content-center gap-2">
-                            <div class="display-6 mb-1">{{ prize.medal }}</div>
-                            <h5 class="h5 fw-bold mb-1">{{ prize.name }}</h5>
-                        </div>
-                        {% if prize.description %}
-                        <p class="text-muted small mb-0">{{ prize.description }}</p>
-                        {% endif %}
-                    </div>
-                    {% if prize.image %}
-                    <img src="{{ prize.image.url }}" class="card-img-top rounded-top-4"
-                        style="width:100%" alt="{{ prize.name }}">
-                    {% endif %}
+    <section class="mb-5 mt-4">
+        {% for section in league.prize_sections %}
+            
+            <!-- Título único de cada sección activa -->
+            <div class="row mb-3 mt-4">
+                <div class="col-12">
+                    <h3 class="h5 fw-bold mb-0 text-dark border-bottom pb-2 text-uppercase">{{ section.title }}</h3>
                 </div>
             </div>
-            {% endfor %}
-        </div>
+            
+            <!-- Grilla de Tarjetas -->
+            <div class="row g-3 align-items-stretch mb-4">
+                {% for prize in section.prizes %}
+                <div class="col-12 col-md-4">
+                    <div class="card border-0 shadow-sm rounded-4 h-100 text-center">
+        
+                        <div class="card-body p-3 d-flex flex-column justify-content-between">
+                            <div>
+                                <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
+                                    <div class="display-6">{{ prize.medal }}</div>
+                                    <h5 class="h5 fw-bold mb-0 text-dark">{{ prize.name }}</h5>
+                                </div>
+                                {% if prize.description %}
+                                <p class="text-muted small mb-0">{{ prize.description }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+        
+                        {% if prize.image %}
+                        <div class="mt-auto p-2">
+                            <img src="{{ prize.image.url }}" class="rounded-4"
+                                style="width: 100%;" alt="{{ prize.name }}">
+                        </div>
+                        {% endif %}
+        
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+        {% endfor %}
     </section>
     {% endif %}
 
@@ -132,9 +151,9 @@
                         <p class="text-muted mb-4">{{ league.marketing_text }}</p>
                         {% endif %}
                         {% if league.marketing_link_url and league.marketing_link_text %}
-                        <div>
+                        <div class="d-flex justify-content-center">
                             <a href="{{ league.marketing_link_url }}" target="_blank" rel="noopener noreferrer"
-                                class="btn btn-success rounded-pill px-4">
+                                class="btn btn-outline-success rounded-pill px-4">
                                 {{ league.marketing_link_text }}
                             </a>
                         </div>
