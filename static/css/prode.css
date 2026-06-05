@@ -12,10 +12,12 @@
     --primary-color: #667eea;
     --secondary-color: #f8f5fa;
     --black-color: #000000;
+    --tertiary-color: #d6e4f3;
 }
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--tertiary-color) !important;
 }
 
 .navbar {
@@ -31,11 +33,6 @@ body {
     font-size: 1.5rem;
     
 }
-
-
-    
-
-
 
 .hero-section h1 {
     font-weight: 700;

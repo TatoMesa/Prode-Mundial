@@ -3,21 +3,25 @@
 {% block title %}{{ league.name }} — Ranking{% endblock %}
 
 {% block content %}
-<div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h1 class="h4 mb-0">{{ league.name }}</h1>
-    </div>
-    <a href="{% url 'leagues:my_leagues' %}" class="btn btn-sm btn-outline-secondary rounded-pill">
-        ← Mis ligas
-    </a>
+<div class="container" >
+    <div class="d-flex align-items-center py-2 justify-content-between w-100 ">
+        <div class="d-flex align-items-center">
+            {% if league.logo %}
+            <img src="{{ league.logo.url }}" class="rounded shadow-sm"
+                style="width: 150px; height: auto; object-fit: contain;" alt="{{ league.name }}">
+            {% endif %}
+        </div>
+    
+        <a href="{% url 'leagues:my_leagues' %}" class="btn btn-outline-success w-80 rounded-pill">
+            ← Mis ligas
+        </a>
     </div>
 
-    <div class="row g-3 mb-4 justify-content-center">
+    <div class="row g-2 mb-2 justify-content-center">
 
         <div class="col-6 col-md-3">
             <div class="card border-0 shadow-sm rounded-4">
-                <div class="card-body p-3 text-center">
+                <div class="card-body p-1 text-center">
                     <div class="text-muted small mb-1">Participantes</div>
                     <div class="h4 fw-bold mb-0">{{ league.memberships.count }}</div>
                 </div>
@@ -26,66 +30,122 @@
 
         <div class="col-6 col-md-3">
             <div class="card border-0 shadow-sm rounded-4">
-                <div class="card-body p-3 text-center">
+                <div class="card-body p-1 text-center">
                     <div class="text-muted small mb-1">Tu posición</div>
                     <div class="h4 fw-bold mb-0">
                         {% for player in ranking %}
-                            {% if player == request.user %}
-                                {{ forloop.counter }}°
-                            {% endif %}
+                        {% if player == request.user %}
+                        {{ forloop.counter }}°
+                        {% endif %}
                         {% endfor %}
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
 
+    <!-- Tabla de posiciones -->
     <div class="card border-0 shadow-sm rounded-4">
-    <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
-        <thead class="table-light">
-            <tr>
-            <th class="text-center" style="width:50px">Pos.</th>
-            <th>Usuario</th>
-            <th class="text-center">Puntos</th>
-            <th class="text-center">Exactos</th>
-            <th class="text-center">Ganador</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for player in ranking %}
-            <tr {% if player == request.user %}class="table-warning"{% endif %}>
-            <td class="text-center fw-bold">
-                {% if forloop.counter == 1 %}🥇
-                {% elif forloop.counter == 2 %}🥈
-                {% elif forloop.counter == 3 %}🥉
-                {% else %}{{ forloop.counter }}{% endif %}
-            </td>
-            <td>
-                {{ player.username }}
-                {% if player == request.user %}
-                <span class="badge bg-warning text-dark ms-1 small"></span>
-                {% endif %}
-            </td>
-            <td class="text-center fw-bold text-success">{{ player.total_points|default:0 }}</td>
-            <td class="text-center">{{ player.exact_count|default:0 }}</td>
-            <td class="text-center">{{ player.winner_count|default:0 }}</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-        </table>
-    </div>
-    </div>
-
-    <aside class="mt-4">
-        <div class="alert alert-info">
-            <p class="mb-1">El ranking se actualiza cada vez que se resuelve un partido.</p>
-            <p class="mb-0">¡Suerte en la liga!</p>
+        <div class="table-responsive" style="max-height: 490px; overflow-y: auto;">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light sticky-top">
+                    <tr>
+                        <th class="text-center p-1" >Pos.</th>
+                        <th class="text-center p-1">Usuario</th>
+                        <th class="text-center p-1">Puntos</th>
+                        <th class="text-center p-1">Exactos</th>
+                        <th class="text-center p-1">Ganador</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for player in ranking %}
+                    <tr {% if player == request.user %} class="table-warning" {% endif %}>
+                        <td class="text-center fw-bold">
+                            {% if forloop.counter == 1 %}🥇
+                            {% elif forloop.counter == 2 %}🥈
+                            {% elif forloop.counter == 3 %}🥉
+                            {% else %}{{ forloop.counter }}{% endif %}
+                        </td>
+                        <td>
+                            {{ player.username }}
+                            {% if player == request.user %}
+                            <span class="badge bg-warning text-dark ms-1 small">Vos</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center fw-bold text-success">{{ player.total_points|default:0 }}</td>
+                        <td class="text-center">{{ player.exact_count|default:0 }}</td>
+                        <td class="text-center">{{ player.winner_count|default:0 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
-     </aside>
-
     </div>
+
+    {% if league.has_prizes %}
+    <section class="mb-2 mt-2">
+        <h2 class="h3 fw-bold mb-2">{{ league.prizes_title }}</h2>
+        <div class="row g-1">
+            {% for prize in league.prizes %}
+            <div class="col-12 col-md-4">
+                <div class="card border-0 shadow-sm rounded-4 h-100 text-center">
+                    
+                    <div class="card-body p-2">
+                        <div class="d-flex align-items-center justify-content-center gap-2">
+                            <div class="display-6 mb-1">{{ prize.medal }}</div>
+                            <h5 class="h5 fw-bold mb-1">{{ prize.name }}</h5>
+                        </div>
+                        {% if prize.description %}
+                        <p class="text-muted small mb-0">{{ prize.description }}</p>
+                        {% endif %}
+                    </div>
+                    {% if prize.image %}
+                    <img src="{{ prize.image.url }}" class="card-img-top rounded-top-4"
+                        style="width:100%" alt="{{ prize.name }}">
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- ── Sección de marketing ───────────────────────────────────────────── -->
+    {% if league.has_marketing %}
+    <section class="mb-5">
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="row g-0">
+
+                {% if league.marketing_image %}
+                <div class="col-md-5">
+                    <img src="{{ league.marketing_image.url }}" class="img-fluid h-100"
+                        style="object-fit:cover;min-height:200px" alt="{{ league.marketing_title }}">
+                </div>
+                {% endif %}
+
+                <div class="{% if league.marketing_image %}col-md-7{% else %}col-12{% endif %}">
+                    <div class="card-body p-4 d-flex flex-column justify-content-center h-100">
+                        {% if league.marketing_title %}
+                        <h2 class="h2 fw-bold mb-3 text-center">{{ league.marketing_title }}</h2>
+                        {% endif %}
+                        {% if league.marketing_text %}
+                        <p class="text-muted mb-4">{{ league.marketing_text }}</p>
+                        {% endif %}
+                        {% if league.marketing_link_url and league.marketing_link_text %}
+                        <div>
+                            <a href="{{ league.marketing_link_url }}" target="_blank" rel="noopener noreferrer"
+                                class="btn btn-success rounded-pill px-4">
+                                {{ league.marketing_link_text }}
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    {% endif %}
 </div>
 
 {% endblock %}
