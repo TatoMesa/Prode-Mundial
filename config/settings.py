@@ -26,6 +26,7 @@ INSTALLED_APPS = [
 
     'apps.accounts.apps.AccountsConfig',
     'apps.matches.apps.MatchesConfig',
+    'apps.tournament.apps.TournamentConfig',
     'apps.predictions.apps.PredictionsConfig',
     'apps.leagues.apps.LeaguesConfig',
 ]

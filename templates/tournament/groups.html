@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Fase de Grupos — Prode Mundial{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="h4 mb-4">Fase de grupos</h1>
+
+    <div class="row g-4">
+        {% for group in groups %}
+        <div class="col-12 col-lg-6">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-header bg-success text-white rounded-top-4 fw-bold">
+                    Grupo {{ group.name }}
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0 small">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Equipo</th>
+                                <th class="text-center">PJ</th>
+                                <th class="text-center">G</th>
+                                <th class="text-center">E</th>
+                                <th class="text-center">P</th>
+                                <th class="text-center">GF</th>
+                                <th class="text-center">GC</th>
+                                <th class="text-center">DG</th>
+                                <th class="text-center fw-bold">Pts</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for standing in group.standings.all %}
+                            <tr {% if forloop.counter <= 2 %} class="table-success" {% endif %}>
+                                <td>
+                                    <span class="me-1">{{ standing.team.flag }}</span>
+                                    {{ standing.team.name }}
+                                </td>
+                                <td class="text-center">{{ standing.played }}</td>
+                                <td class="text-center">{{ standing.won }}</td>
+                                <td class="text-center">{{ standing.drawn }}</td>
+                                <td class="text-center">{{ standing.lost }}</td>
+                                <td class="text-center">{{ standing.goals_for }}</td>
+                                <td class="text-center">{{ standing.goals_against }}</td>
+                                <td class="text-center">{{ standing.goal_difference }}</td>
+                                <td class="text-center fw-bold">{{ standing.points }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="9" class="text-center text-muted py-3">Sin partidos jugados</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

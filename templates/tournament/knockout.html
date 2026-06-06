@@ -1,0 +1,92 @@
+<!-- templates/tournament/knockout.html -->
+{% extends "base.html" %}
+{% block title %}Fase Eliminatoria — Prode Mundial{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="h4 mb-4">Fase eliminatoria</h1>
+
+    <div style="overflow-x:auto">
+    <div style="display:flex; gap:0; margin-bottom:4px; min-width:700px;">
+    {% for round in rounds %}
+    <div style="flex:1; text-align:center; font-size:11px; font-weight:500; color:var(--bs-secondary-color); padding-bottom:6px;">
+        {{ round.name }}
+    </div>
+    {% if not forloop.last %}<div style="min-width:10px;"></div>{% endif %}
+    {% endfor %}
+    </div>
+
+    <div style="display:flex; align-items:stretch; min-width:700px; min-height:400px;">
+    {% for round in rounds %}
+
+    <!-- Columna de partidos -->
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:space-around; gap:8px;">
+        {% for km in round.matches.all %}
+        <div style="display:flex; align-items:center;">
+        <div style="background:var(--bs-body-bg); border:0.5px solid var(--bs-border-color); border-radius:8px; overflow:hidden; width:100%;">
+
+            <!-- Equipo local -->
+            <div style="display:flex; align-items:center; gap:6px; padding:5px 8px; font-size:12px; border-bottom:0.5px solid var(--bs-border-color); min-height:26px;
+            {% if km.match.status == 'FINISHED' and km.match.result_winner == 'home' %}background:var(--bs-success-bg-subtle); font-weight:500;{% endif %}">
+            <span style="font-size:13px">{{ km.match.home_team.flag }}</span>
+            <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ km.match.home_team.code }}</span>
+            {% if km.match.status == 'FINISHED' %}
+                <span style="font-size:11px; font-weight:500;">{{ km.match.home_score }}</span>
+            {% endif %}
+            </div>
+
+            <!-- Equipo visitante -->
+            <div style="display:flex; align-items:center; gap:6px; padding:5px 8px; font-size:12px; min-height:26px;
+            {% if km.match.status == 'FINISHED' and km.match.result_winner == 'away' %}background:var(--bs-success-bg-subtle); font-weight:500;{% endif %}">
+            <span style="font-size:13px">{{ km.match.away_team.flag }}</span>
+            <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ km.match.away_team.code }}</span>
+            {% if km.match.status == 'FINISHED' %}
+                <span style="font-size:11px; font-weight:500;">{{ km.match.away_score }}</span>
+            {% endif %}
+            </div>
+
+            <!-- Penales si aplica -->
+            {% if km.went_to_penalties %}
+            <div style="padding:2px 8px; font-size:10px; color:var(--bs-secondary-color); border-top:0.5px solid var(--bs-border-color); text-align:center;">
+            Penales: {{ km.home_penalties }} — {{ km.away_penalties }}
+            </div>
+            {% endif %}
+
+            <!-- Pendiente: mostrar fecha -->
+            {% if km.match.status == 'PENDING' %}
+            <div style="padding:2px 8px; font-size:10px; color:var(--bs-secondary-color); border-top:0.5px solid var(--bs-border-color); text-align:center;">
+            {{ km.match.kickoff_time|date:"d/m H:i" }}
+            </div>
+            {% elif km.match.status == 'IN_PROGRESS' %}
+            <div style="padding:2px 8px; font-size:10px; color:var(--bs-warning-color); border-top:0.5px solid var(--bs-border-color); text-align:center; font-weight:500;">
+            ● En juego
+            </div>
+            {% endif %}
+
+        </div>
+        </div>
+        {% empty %}
+        <div style="font-size:12px; color:var(--bs-secondary-color); text-align:center; padding:8px;">
+        Por definir
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Conector entre rondas -->
+    {% if not forloop.last %}
+    <div style="min-width:10px; display:flex; flex-direction:column;">
+        {% for km in round.matches.all %}
+        {% if forloop.counter|divisibleby:2 %}
+        <div style="flex:1; border-right:0.5px solid var(--bs-border-color);"></div>
+        {% else %}
+        <div style="flex:1; border-right:0.5px solid var(--bs-border-color); border-bottom:0.5px solid var(--bs-border-color);"></div>
+        {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% endfor %}
+    </div>
+    </div>
+</div>
+{% endblock %}

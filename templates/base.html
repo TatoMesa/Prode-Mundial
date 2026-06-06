@@ -36,6 +36,12 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'leagues:my_leagues' %}">🏆 Mis ligas</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'tournament:groups' %}">📊 Grupos</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'tournament:knockout' %}">⚡ Eliminatorias</a>
+                        </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
                                 {% if user.profile.avatar %}
@@ -61,6 +67,7 @@
                                 </li>
                             </ul>
                         </li>
+                        
                         
                         <li class="nav-link"><strong>Total {{ user_total_points|default:0 }} Pts</strong></li>   
                         

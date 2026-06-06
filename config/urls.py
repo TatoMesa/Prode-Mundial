@@ -28,7 +28,7 @@ urlpatterns = [
     path('matches/', include('apps.matches.urls', namespace='matches')),
     path('predictions/', include('apps.predictions.urls', namespace='predictions')),
     path('leagues/', include('apps.leagues.urls', namespace='leagues')),
-    
+    path('tournament/', include('apps.tournament.urls', namespace='tournament')),
 
     # Recuperación de contraseña — Django built-in
     path('accounts/password-reset/',
