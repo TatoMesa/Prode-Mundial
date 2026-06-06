@@ -13,9 +13,6 @@ env/
 *.pyo
 __pycache__/
 *.py[cod]
-__pycache__/
-*.pyd
-.pytest_cache/
 
 # Django
 db.sqlite3

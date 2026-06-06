@@ -2,26 +2,27 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import UserProfile
+from django.contrib.auth.forms import AuthenticationForm
 
 
 class RegisterForm(UserCreationForm):
     """Formulario de registro extendido con campo de email obligatorio."""
     email = forms.EmailField(
         required=True,
-        widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'tu@email.com'})
+        widget=forms.EmailInput(attrs={'placeholder': 'tu@email.com'})
     )
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'password1', 'password2')
+        fields = ('username', 'email')
         widgets = {
-            'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre de usuario'}),
+            'username': forms.TextInput(attrs={'placeholder': 'Nombre de usuario'}),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['password1'].widget.attrs.update({'class': 'form-control'})
-        self.fields['password2'].widget.attrs.update({'class': 'form-control'})
+        for field in self.fields.values():
+            field.widget.attrs.update({'class': 'form-control'})
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
@@ -39,20 +40,26 @@ class RegisterForm(UserCreationForm):
 
 class ProfileUpdateForm(forms.ModelForm):
     """Formulario para actualizar datos del perfil del usuario."""
-    first_name = forms.CharField(
-        max_length=150, required=False,
-        widget=forms.TextInput(attrs={'class': 'form-control'})
-    )
-    last_name = forms.CharField(
-        max_length=150, required=False,
-        widget=forms.TextInput(attrs={'class': 'form-control'})
-    )
-    
+    first_name = forms.CharField(max_length=150, required=False)
+    last_name = forms.CharField(max_length=150, required=False)
 
     class Meta:
         model = UserProfile
-        fields = ('avatar','telefono')
-        widgets = {
-            'avatar': forms.FileInput(attrs={'class': 'form-control'}),
-            'telefono': forms.TextInput(attrs={'class': 'form-control'}),
-        }
+        fields = ('avatar', 'telefono')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs.update({'class': 'form-control'})
+
+class LoginForm(AuthenticationForm):
+    """Formulario de inicio de sesión conectado estrictamente con Bootstrap."""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Forzamos a que todos los campos del login tengan las clases que ensanchan el input
+        for field in self.fields.values():
+            field.widget.attrs.update({
+                'class': 'form-control fw-bold rounded-3 py-2',
+            })
+        
+      

@@ -2,44 +2,55 @@
 {% block title %}Registrarse — Prode Mundial{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-  <div class="col-md-6 col-lg-5">
-    <div class="card shadow-sm">
-      <div class="card-body p-4">
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+      <div class="card shadow-sm">
+        <div class="card-body p-4">
 
-        <h1 class="h4 mb-1 text-center">Crear cuenta</h1>
-        <p class="text-muted text-center small mb-4">Completá los datos para participar</p>
+          <h1 class="h4 mb-1 text-center">Crear cuenta</h1>
+          <p class="text-muted text-center small mb-4">Completá los datos para participar</p>
 
-        <form method="post" novalidate>
-          {% csrf_token %}
+          <form method="post" novalidate>
+            {% csrf_token %}
 
-          {% for field in form %}
-          <div class="mb-3">
-            <label for="{{ field.id_for_label }}" class="form-label">
-              {{ field.label }}
-            </label>
-            {{ field }}
-            {% if field.help_text %}
+            {% for field in form %}
+            <div class="mb-3">
+              <label for="{{ field.id_for_label }}" class="form-label">
+                {{ field.label }}
+              </label>
+              {{ field }}
+              {% if field.help_text %}
               <div class="form-text">{{ field.help_text }}</div>
-            {% endif %}
-            {% if field.errors %}
+              {% endif %}
+              {% if field.errors %}
               {% for error in field.errors %}
-                <div class="invalid-feedback d-block">{{ error }}</div>
+              <div class="invalid-feedback d-block">{{ error }}</div>
               {% endfor %}
-            {% endif %}
-          </div>
-          {% endfor %}
+              {% endif %}
+            </div>
+            {% endfor %}
 
-          <button type="submit" class="btn btn-success w-100 mt-2">
-            Crear cuenta
-          </button>
-        </form>
+            <div class="mb-4 d-flex justify-content-start gap-2 py-1">
+              <input type="checkbox" class="form-check-input m-0" id="terms_conditions" name="terms" required
+                style="cursor: pointer; width: 1.1em; height: 1.1em; accent-color: #198754;">
+              <label class="form-check-label small text-muted" for="terms_conditions" style="cursor: pointer; user-select: none;">
+                Acepto los <a href="{% url 'accounts:terminos_condiciones' %}" target="_blank" class="text-decoration-underline text-success fw-semibold">Términos y Condiciones</a>
+              </label>
+            </div>
 
-        <p class="mt-4 text-center small">
-          ¿Ya tenés cuenta?
-          <a href="{% url 'accounts:login' %}">Iniciá sesión</a>
-        </p>
+            <button type="submit" class="btn btn-success w-100 mt-2">
+              Crear cuenta
+            </button>
+          </form>
 
+
+          <p class="mt-4 text-center small">
+            ¿Ya tenés cuenta?
+            <a href="{% url 'accounts:login' %}">Iniciá sesión</a>
+          </p>
+
+        </div>
       </div>
     </div>
   </div>

@@ -11,38 +11,43 @@
           <h1 class="h4 mb-1 text-center">Iniciar sesión</h1>
           <p class="text-muted text-center small mb-4">Ingresá para cargar tus pronósticos</p>
 
-          <form method="post" novalidate class="mb-4 w-100 text-center">
+          <form method="post" novalidate class="mb-4 w-100">
             {% csrf_token %}
           
             {% if form.non_field_errors %}
-            <div class="alert alert-danger py-2">
+            <div class="alert alert-danger py-2 small">
               {{ form.non_field_errors }}
             </div>
             {% endif %}
           
+            <!-- Bucle de campos (Usuario y Contraseña) -->
             {% for field in form %}
-            <div class="mb-4 w-100 text-center">
-              <label for="{{ field.id_for_label }}" class="form-label fw-semibold w-100">
+            <div class="mb-3 w-100 ">
+              <label for="{{ field.id_for_label }}" class="form-label">
                 {{ field.label }}
               </label>
-              <div class="w-100 ">
-                {{ field.as_widget }}
+          
+              <div class="w-100">
+                {{ field }}
               </div>
           
               {% if field.help_text %}
-              <div class="form-text">
+              <div class="form-text small text-muted">
                 {{ field.help_text }}
               </div>
               {% endif %}
           
               {% for error in field.errors %}
-              <div class="invalid-feedback d-block">
+              <div class="invalid-feedback d-block small">
                 {{ error }}
               </div>
               {% endfor %}
             </div>
             {% endfor %}
-            <button type="submit" class="btn btn-success mt-2">
+          
+            
+          
+            <button type="submit" class="btn btn-success w-100 mt-2">
               Entrar
             </button>
           </form>

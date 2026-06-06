@@ -2,11 +2,12 @@ from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import CreateView, UpdateView 
 from django.contrib import messages
 
 from .forms import RegisterForm, ProfileUpdateForm
 from .models import UserProfile
+from .forms import LoginForm
 
 
 class RegisterView(CreateView):
@@ -25,6 +26,7 @@ class CustomLoginView(LoginView):
     """Login con template personalizado."""
     template_name = 'accounts/login.html'
     redirect_authenticated_user = True
+    form_class = LoginForm
 
 
 from django.db.models import Sum, Count, Q
