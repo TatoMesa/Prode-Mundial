@@ -9,6 +9,7 @@ from django.contrib.auth.models import User
 
 from .models import League, LeagueMembership
 from .forms import JoinLeagueForm
+from django.db.models import Sum, Count, Q, F
 
 
 class JoinLeagueView(LoginRequiredMixin, FormView):
@@ -73,6 +74,8 @@ class LeagueRankingView(LoginRequiredMixin, DetailView):
                 exact_count=Count('predictions__id', filter=Q(predictions__is_exact=True)),
                 winner_count=Count('predictions__id', filter=Q(predictions__is_winner=True)),
             )
-            .order_by('-total_points', '-exact_count', 'username')
+            F('total_points').desc(nulls_last=True),
+            F('exact_count').desc(nulls_last=True),
+            'username',
         )
         return context
