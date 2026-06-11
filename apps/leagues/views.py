@@ -74,8 +74,10 @@ class LeagueRankingView(LoginRequiredMixin, DetailView):
                 exact_count=Count('predictions__id', filter=Q(predictions__is_exact=True)),
                 winner_count=Count('predictions__id', filter=Q(predictions__is_winner=True)),
             )
-            F('total_points').desc(nulls_last=True),
-            F('exact_count').desc(nulls_last=True),
-            'username',
+            .order_by(
+                F('total_points').desc(nulls_last=True),
+                F('exact_count').desc(nulls_last=True),
+                'username',
+            )
         )
         return context
