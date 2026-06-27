@@ -67,7 +67,11 @@ class KnockoutMatch(models.Model):
     """
     round = models.ForeignKey(KnockoutRound, on_delete=models.CASCADE, related_name='matches', verbose_name='Fase')
     match = models.OneToOneField(Match, on_delete=models.CASCADE, related_name='knockout_match', verbose_name='Partido')
-
+    slot_number = models.PositiveSmallIntegerField(
+        default=1,
+        verbose_name='Posición en la llave',
+        help_text='1=arriba, 2=abajo, 3=tercero... define el orden visual en el bracket'
+    )
     # Slots de texto hasta que se asignen los equipos reales
     slot_home = models.CharField(max_length=50, blank=True, verbose_name='Slot local', help_text='Ej: 1° Grupo A')
     slot_away = models.CharField(max_length=50, blank=True, verbose_name='Slot visitante', help_text='Ej: 2° Grupo B')
@@ -80,9 +84,10 @@ class KnockoutMatch(models.Model):
     class Meta:
         verbose_name = 'Partido eliminatorio'
         verbose_name_plural = 'Partidos eliminatorios'
+        ordering = ['round__order', 'slot_number']  # ← orden por fase y posición
 
     def __str__(self):
-        return f'{self.round} — {self.match}'
+        return f'{self.round} — Slot {self.slot_number} — {self.match}'
 
     @property
     def penalty_winner(self):

@@ -1,6 +1,6 @@
 from django.views.generic import TemplateView
-from .models import Group, KnockoutRound
-
+from django.db.models import Prefetch
+from .models import Group, KnockoutRound, KnockoutMatch
 
 class GroupStandingsView(TemplateView):
     template_name = 'tournament/groups.html'
@@ -19,7 +19,11 @@ class KnockoutView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['rounds'] = KnockoutRound.objects.prefetch_related(
-            'matches__match__home_team',
-            'matches__match__away_team',
+            Prefetch(
+                'matches',
+                queryset=KnockoutMatch.objects.select_related(
+                    'match__home_team', 'match__away_team'
+                ).order_by('slot_number')  # ← orden explícito
+            )
         ).order_by('order')
         return context

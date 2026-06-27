@@ -41,9 +41,11 @@ class KnockoutRoundAdmin(admin.ModelAdmin):
 
 @admin.register(KnockoutMatch)
 class KnockoutMatchAdmin(admin.ModelAdmin):
-    list_display = ('round', 'match', 'slot_home', 'slot_away', 'went_to_penalties')
+    list_display = ('round', 'slot_number', 'match', 'slot_home', 'slot_away', 'went_to_penalties')
+    list_editable = ('slot_number',)
     list_filter = ('round',)
+    ordering = ('round__order', 'slot_number')
     fields = (
-        'round', 'match', 'slot_home', 'slot_away',
+        'round', 'match', 'slot_number', 'slot_home', 'slot_away',
         'went_to_penalties', 'home_penalties', 'away_penalties',
     )
