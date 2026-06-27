@@ -28,8 +28,8 @@
             <!-- Equipo local -->
             <div style="display:flex; align-items:center; gap:6px; padding:5px 8px; font-size:12px; border-bottom:0.5px solid var(--bs-border-color); min-height:26px;
             {% if km.match.status == 'FINISHED' and km.match.result_winner == 'home' %}background:var(--bs-success-bg-subtle); font-weight:500;{% endif %}">
-            <span style="font-size:13px">{{ km.match.home_team.flag }}</span>
-            <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ km.match.home_team.code }}</span>
+            <span style="font-size:13px">{{ km.match.home_team.flag }} </span>
+            <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ km.match.home_team.name }}</span>
             {% if km.match.status == 'FINISHED' %}
                 <span style="font-size:11px; font-weight:500;">{{ km.match.home_score }}</span>
             {% endif %}
@@ -39,7 +39,7 @@
             <div style="display:flex; align-items:center; gap:6px; padding:5px 8px; font-size:12px; min-height:26px;
             {% if km.match.status == 'FINISHED' and km.match.result_winner == 'away' %}background:var(--bs-success-bg-subtle); font-weight:500;{% endif %}">
             <span style="font-size:13px">{{ km.match.away_team.flag }}</span>
-            <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ km.match.away_team.code }}</span>
+            <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ km.match.away_team.name }}</span>
             {% if km.match.status == 'FINISHED' %}
                 <span style="font-size:11px; font-weight:500;">{{ km.match.away_score }}</span>
             {% endif %}
