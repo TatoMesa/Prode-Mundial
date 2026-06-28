@@ -44,6 +44,12 @@
         </div>
     </div>
 
+    {% if league.start_from_round %}
+    <div class="alert alert-info small py-2 mb-3">
+      ℹ️ Esta liga cuenta puntos desde <strong>{{ league.start_from_round.name }}</strong> en adelante.
+    </div>
+    {% endif %}
+    
     <!-- Tabla de posiciones -->
     <div class="card border-0 shadow-sm rounded-4">
         <div class="table-responsive" style="max-height: 490px; overflow-y: auto;">

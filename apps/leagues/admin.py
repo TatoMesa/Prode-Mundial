@@ -17,7 +17,7 @@ class LeagueAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Datos básicos', {
-            'fields': ('name', 'code', 'is_active', 'logo'),
+            'fields': ('name', 'code', 'is_active', 'logo', 'start_from_round'),
         }),
         
         ('Sección 1 — Primera Ronda', {

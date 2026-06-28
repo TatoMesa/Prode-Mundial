@@ -2,6 +2,7 @@ import random
 import string
 from django.db import models
 from django.contrib.auth.models import User
+from apps.tournament.models import KnockoutRound
 
 
 def generate_code():
@@ -122,6 +123,16 @@ class League(models.Model):
     marketing_link_url = models.URLField(
         blank=True,
         verbose_name='Marketing — URL del botón',
+    )
+
+    start_from_round = models.ForeignKey(
+        KnockoutRound,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name='Contar puntos desde',
+        help_text='Si se deja vacío cuenta desde el inicio del torneo',
+        related_name='leagues',
     )
 
     class Meta:

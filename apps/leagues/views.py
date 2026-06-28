@@ -65,14 +65,37 @@ class LeagueRankingView(LoginRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         league = self.get_object()
 
-        # Ranking de los miembros de esta liga
+        # Filtrar pronósticos según la fase de inicio
+        prediction_filter = Q(predictions__isnull=False)
+
+        if league.start_from_round:
+            # Solo contar puntos de partidos de esa fase en adelante
+            from apps.tournament.models import KnockoutMatch
+            match_ids = KnockoutMatch.objects.filter(
+                round__order__gte=league.start_from_round.order
+            ).values_list('match_id', flat=True)
+            prediction_filter = Q(predictions__match_id__in=match_ids)
+
         context['ranking'] = (
             User.objects
             .filter(memberships__league=league)
             .annotate(
-                total_points=Sum('predictions__points'),
-                exact_count=Count('predictions__id', filter=Q(predictions__is_exact=True)),
-                winner_count=Count('predictions__id', filter=Q(predictions__is_winner=True)),
+                total_points=Sum(
+                    'predictions__points',
+                    filter=prediction_filter if league.start_from_round else Q(predictions__isnull=False)
+                ),
+                exact_count=Count(
+                    'predictions__id',
+                    filter=Q(predictions__is_exact=True) & (
+                        prediction_filter if league.start_from_round else Q()
+                    )
+                ),
+                winner_count=Count(
+                    'predictions__id',
+                    filter=Q(predictions__is_winner=True) & (
+                        prediction_filter if league.start_from_round else Q()
+                    )
+                ),
             )
             .order_by(
                 F('total_points').desc(nulls_last=True),
@@ -80,4 +103,6 @@ class LeagueRankingView(LoginRequiredMixin, DetailView):
                 'username',
             )
         )
+
+        context['start_from_round'] = league.start_from_round
         return context
