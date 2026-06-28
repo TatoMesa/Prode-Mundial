@@ -13,19 +13,23 @@
   <div class="d-flex gap-2 mb-4 flex-wrap">
     <a href="{% url 'matches:list' %}"
       class="btn btn-sm {% if not request.GET.estado %}btn-dark{% else %}btn-outline-secondary{% endif %}">
-      Todos
-    </a>
-    <a href="?estado=PENDING"
-      class="btn btn-sm {% if request.GET.estado == 'PENDING' %}btn-secondary{% else %}btn-outline-secondary{% endif %}">
-      Pendientes
+      Pendientes y en juego
     </a>
     <a href="?estado=IN_PROGRESS"
       class="btn btn-sm {% if request.GET.estado == 'IN_PROGRESS' %}btn-warning{% else %}btn-outline-warning{% endif %}">
       En juego
     </a>
+    <a href="?estado=PENDING"
+      class="btn btn-sm {% if request.GET.estado == 'PENDING' %}btn-secondary{% else %}btn-outline-secondary{% endif %}">
+      Pendientes
+    </a>
     <a href="?estado=FINISHED"
       class="btn btn-sm {% if request.GET.estado == 'FINISHED' %}btn-success{% else %}btn-outline-success{% endif %}">
       Finalizados
+    </a>
+    <a href="?estado=todos"
+      class="btn btn-sm {% if request.GET.estado == 'todos' %}btn-dark{% else %}btn-outline-dark{% endif %}">
+      Todos
     </a>
   </div>
 

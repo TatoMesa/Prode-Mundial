@@ -1,5 +1,6 @@
 # apps/matches/views.py
 from django.views.generic import ListView, DetailView
+from django.db.models import Case, When, IntegerField
 from .models import Match
 
 
@@ -9,11 +10,27 @@ class MatchListView(ListView):
     context_object_name = 'matches'
 
     def get_queryset(self):
-        qs = Match.objects.select_related('home_team', 'away_team').order_by('kickoff_time')
         estado = self.request.GET.get('estado')
+
         if estado in ('PENDING', 'IN_PROGRESS', 'FINISHED'):
-            qs = qs.filter(status=estado)
-        return qs
+            return Match.objects.select_related('home_team', 'away_team').filter(
+                status=estado
+            ).order_by('kickoff_time')
+
+        if estado == 'todos':
+            return Match.objects.select_related('home_team', 'away_team').order_by('kickoff_time')
+
+        # Por defecto: en juego primero, luego pendientes — sin finalizados
+        return Match.objects.select_related('home_team', 'away_team').exclude(
+            status=Match.Status.FINISHED
+        ).annotate(
+            order=Case(
+                When(status=Match.Status.IN_PROGRESS, then=0),
+                When(status=Match.Status.PENDING, then=1),
+                default=2,
+                output_field=IntegerField(),
+            )
+        ).order_by('order', 'kickoff_time')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
