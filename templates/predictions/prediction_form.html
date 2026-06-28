@@ -99,6 +99,11 @@
               <strong class="text-muted">0 pts</strong>
             </div>
           </div>
+          {% if match.knockout_match %}
+          <div class="alert alert-info py-2 mb-3 small text-center">
+            ℹ️ Fase eliminatoria — el pronóstico se puntúa sobre el resultado final (90 min + suplementario). Si hay penales, no cuentan.
+          </div>
+          {% endif %}
 
           <button
             type="submit"
